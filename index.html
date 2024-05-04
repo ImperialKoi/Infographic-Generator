@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    Infographic Generator
+  </title>
+  <style>
+    input {
+      margin-left: 10px;
+      font-family: 'Consolas';
+      margin: 6px 0;
+      padding: 5px 10px;
+  box-sizing: border-box;
+  border: none;
+  border-bottom: 2px solid grey;
+}
+  button {
+    margin-left: 10px;
+  font-weight: bold;
+    font-family: 'Consolas'
+  }
+  .button {
+      border: none;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      transition-duration: 0.4s;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+.button1 {
+  background-color: white;
+  color: black;
+  border: 2px solid #555555;
+}
+
+.button1:hover {
+  background-color: #555555;
+  color: white;
+}
+    #infographicCanvas {
+      border: 10px solid rgba(0,0,0,0.2);
+      border-radius: px;
+    }
+    .selected {
+      border: 2px solid rgb(58, 123, 209);
+    }
+    section{
+      size: 10px;
+    }
+    header h1 {
+      font-size: 100px;
+      font-family: 'Courier New', Courier, monospace;
+      line-height: 3;
+      position: static;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 100px;
+    }
+    header h2{
+      font-size: 40px;
+    }
+    header h3 {
+      font-weight: lighter;
+      font-family: 'Courier New', Courier, monospace;
+      line-height: 0;
+      position: static;
+      display: flex;
+      align-items: left;
+      justify-content: center;
+      margin-bottom: 270px;
+    }
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      position: relative;
+      align-items: center;
+      justify-content: center;
+      background: #e7e7e7;
+    }
+    #summaryContainer {
+      background-color: rgb(255, 255, 255); /* Set the background color of the box */
+      border-radius: 10px; /* Add rounded corners to the box */
+      margin-top: 20px;
+      margin-bottom: 20px;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+    body::before {
+      content: "";
+      background-image: url('./untitled.png');
+      background-repeat: no-repeat;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      position: fixed;
+      z-index: -1000;
+      filter: blur(10px);
+    }
+    #textInputContainer {
+      display: flex;
+      position: relative;
+      align-items: center;
+      margin-bottom: 10px;
+      margin-right: 20px;
+    }
+    #textInputContainer input[type="text"],
+    #textInputContainer input[type="number"] {
+      margin-right: 10px;
+    }
+    #textInputContainer button {
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      margin-bottom : 15px;
+      margin-top : 5px;
+    }
+    #textInputContainer button:hover {
+      background-color: #0056b3;
+    }
+    #sliderContainer {
+      position: static;
+      top: 810px;
+      right: -200;
+      width: 200px;
+      padding: 50px;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    #sliderContainer label {
+      display: block;
+      margin-bottom: 10px;
+    }
+    #fontSliderContainer {
+      margin-top: 30px;
+    }
+    #canvas {
+      display: flex;
+      align-items: center;
+    }
+    .generateInfographic {
+      display:flex;
+      position: static;
+      bottom: 1020px;
+      right: -200;
+      padding: 20;
+    }
+
+    .container {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    #setBackgroundColorButton {
+      margin-top: 10px;
+    }
+
+    #textInputContainer button {
+      margin-top: 15px;
+    }
+
+  </style>
+</head>
+<section>
+<header>
+  <h2>      </h2>
+  <h1>Infographic Generator</h1>
+  <h3>A Simple Way to Make Infographics</h3>
+</header>
+</section>
+<body>
+<section id="everythingContainer">
+  <label for="templateSelect">Select Template:</label>
+  <select id="templateSelect">
+    <option value="template1">Template 1</option>
+    <option value="template2">Template 2</option>
+    <option value="template3">Template 3</option>
+  </select>
+  <br><br>
+  <input type="file" id="imageInput" multiple>
+  <br><br>
+  <form id="summaryForm">
+    <label for="topicInput">Enter Topic:</label>
+    <input type="text" id="topicInput" name="title" placeholder="ex. Tennis">
+    <button class="button button1" type="submit">Get Summary</button>
+</form>
+<section id="summaryContainerContainer">
+  <div id="summaryContainer"></div>
+</section>
+  <button class="button button1" onclick="importImage()">Import Image</button>
+  <div id="textInputContainer">
+    <input type="text" id="textInput" placeholder="Enter text">
+    <input type="number" id="textBoxWidth" placeholder="Width" style="width: 70px;">
+    <input type="number" id="textBoxHeight" placeholder="Height" style="width: 70px;">
+    <button class="button button1" onclick="addTextbox()">Add Text Box</button>
+  </div>
+  <input type="text" id="titleInput" name="title" placeholder="Title">
+  <button class="button button1" onclick="generateInfo()">Generate Infographic</button>
+  <p></p>
+
+
+  <div class="container">
+
+  <canvas id="infographicCanvas" width="700" height="1000"></canvas>
+
+    <div>
+
+  <div id="sliderContainer">
+    <label for="borderWidthSlider">Border Width:</label>
+    <input type="range" id="borderWidthSlider" min="0" max="10" step="1" value="5">
+    <label for="borderColorPicker">Border Color:</label>
+    <input type="color" id="borderColorPicker" value="#000000">
+    <div id="fontSliderContainer">
+      <label for="fontSizeSlider">Font Size:</label>
+      <input type="range" id="fontSizeSlider" min="10" max="50" step="1" value="16">
+      <label for="fontColorPicker">Font Color:</label>
+      <input type="color" id="fontColorPicker" value="#000000">
+      <label for="backgroundColorPicker">Background Color:</label>
+      <input type="color" id="backgroundColorPicker" value="#f0f0f0">
+      <button class="button button1" id="setBackgroundColorButton">Set Background Color</button> <!-- Added button -->
+    </div>
+  </div>
+</section>
+</div>
+
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch-jsonp/1.1.2/fetch-jsonp.min.js"></script> <!-- Include fetch-jsonp library -->
+
+  <script>
+    const canvas = document.getElementById('infographicCanvas');
+    const ctx = canvas.getContext('2d');
+    let images = [];
+    let textInputs = [];
+    let selectedElement = null;
+    let isDragging = false;
+    let dragOffsetX = 0;
+    let dragOffsetY = 0;
+    let borderWidth = 5;
+    let borderColor = '#000000';
+    let fontSize = 16;
+    let fontColor = '#000000';
+
+    function drawTextBox(text, x, y, width, height) {
+      ctx.font = '60px Arial';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      const lineHeight = 2; // Line height for multi-line text
+
+           ctx.fillStyle = '#000';
+           const words = text.split(' ');
+           let line = '';
+           let lineCount = 1;
+           let column = 0;
+           for (let n = 0; n < words.length; n++) {
+               const testLine = line + words[n] + ' ';
+               const metrics = ctx.measureText(testLine);
+               const testWidth = metrics.width;
+               if (testWidth > width && n > 0) {
+                   ctx.fillText(line, x + width/2, y + lineHeight * lineCount);
+                   line = words[n] + ' ';
+
+                lineCount++;
+
+               } else {
+                   line = testLine;
+               }
+           }
+           ctx.fillText(line, x + width / 2, y + lineHeight * lineCount);
+       }
+
+    function importImage() {
+      const template = document.getElementById('templateSelect').value;
+      const imageFiles = document.getElementById('imageInput').files;
+
+      for (let i = 0; i < imageFiles.length; i++) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const imageData = event.target.result;
+          const imageObj = new Image();
+          imageObj.onload = function() {
+            images.push({ obj: imageObj, x: 50, y: 50, width: 200, height: 150, rotationAngle: 0 });
+            drawInfographic(template);
+          };
+          imageObj.src = imageData;
+        };
+        reader.readAsDataURL(imageFiles[i]);
+      }
+    }
+
+    function drawInfographic(template) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      switch (template) {
+        case 'template1':
+          drawTemplate1();
+          break;
+        case 'template2':
+          drawTemplate2();
+          break;
+        case 'template3':
+          drawTemplate3();
+          break;
+        default:
+          // Default template
+          break;
+      }
+
+      // Draw text boxes
+      textInputs.forEach(input => {
+        ctx.save(); // Save the current transformation matrix
+        ctx.translate(input.x + input.width / 2, input.y + input.height / 2); // Move origin to text box center
+        ctx.rotate(input.rotationAngle * Math.PI / 180); // Apply rotation
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'; // Transparent white background
+        ctx.fillRect(-input.width / 2, -input.height / 2, input.width, input.height); // Draw text box centered
+        ctx.strokeStyle = borderColor; // Set border color
+        ctx.lineWidth = borderWidth; // Set border width
+        ctx.strokeRect(-input.width / 2, -input.height / 2, input.width, input.height); // Draw border
+        ctx.fillStyle = fontColor; // Set font color
+        ctx.font = `${fontSize}px Arial`; // Set font size and family
+        wrapText(ctx, input.text, - input.width / 2 + 5, -input.height / 2 + 20, input.width - 10, input.height - 10); // Wrapped text
+        ctx.restore(); // Restore the saved transformation matrix
+
+        if (selectedElement === input) {
+          ctx.strokeStyle = 'blue';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(input.x, input.y, input.width, input.height);
+        }
+      });
+
+      // Draw images
+      images.forEach(image => {
+        ctx.save(); // Save the current transformation matrix
+        ctx.translate(image.x + image.width / 2, image.y + image.height / 2); // Move origin to image center
+        ctx.rotate(image.rotationAngle * Math.PI / 180); // Apply rotation
+        ctx.drawImage(image.obj, -image.width / 2, -image.height / 2, image.width, image.height); // Draw image centered
+        ctx.restore(); // Restore the saved transformation matrix
+
+        if (selectedElement === image) {
+          ctx.strokeStyle = 'blue';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(image.x, image.y, image.width, image.height);
+        }
+      });
+    }
+
+    const setBackgroundColorButton = document.getElementById('setBackgroundColorButton');
+    setBackgroundColorButton.addEventListener('click', () => {
+      if (selectedElement) {
+        const backgroundColor = document.getElementById('backgroundColorPicker').value; // Get the selected background color
+        if (selectedElement.obj) {
+          // Background color for images
+          selectedElement.backgroundColor = backgroundColor;
+        } else {
+          // Background color for text boxes
+          selectedElement.background = backgroundColor;
+        }
+        drawInfographic(document.getElementById('templateSelect').value);
+      }
+    });
+
+    function drawTemplate1() {
+      // Draw background or base design
+      ctx.fillStyle = '#f0f0f0';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw text
+      ctx.fillStyle = '#000000';
+      ctx.font = '24px Arial';
+      wrapText(ctx, "", 50, 50, canvas.width - 100, 30);
+    }
+
+    // Add other template drawing functions here...
+
+    // Helper function to wrap text within a specified width
+    function wrapText(context, text, x, y, maxWidth, lineHeight) {
+      let words = text.split(' ');
+      let line = '';
+      let yPos = y;
+      let lineWidth = 0;
+
+      for (let i = 0; i < words.length; i++) {
+        let testLine = line + words[i] + ' ';
+        let metrics = context.measureText(testLine);
+        let testWidth = metrics.width;
+        if (testWidth > maxWidth && i > 0) {
+          context.fillText(line, x, yPos);
+          line = words[i] + ' ';
+          yPos = yPos + lineHeight- 100;
+          lineWidth = Math.max(lineWidth, testWidth);
+        } else {
+          line = testLine;
+          lineWidth = Math.max(lineWidth, testWidth);
+        }
+      }
+      context.fillText(line, x, yPos);
+      lineWidth = Math.max(lineWidth, context.measureText(line).width);
+      return { width: lineWidth, height: yPos + lineHeight - y };
+    }
+
+    canvas.addEventListener('mousedown', handleMouseDown);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('keydown', handleKeyDown); // Add keydown event listener
+
+    function handleMouseDown(event) {
+      const mouseX = event.clientX - canvas.getBoundingClientRect().left;
+      const mouseY = event.clientY - canvas.getBoundingClientRect().top;
+
+      // Check if clicked on an image
+      for (let i = 0; i < images.length; i++) {
+        const image = images[i];
+        if (
+          mouseX >= image.x &&
+          mouseX <= image.x + image.width &&
+          mouseY >= image.y &&
+          mouseY <= image.y + image.height
+        ) {
+          selectedElement = image;
+          isDragging = true;
+          dragOffsetX = mouseX - image.x;
+          dragOffsetY = mouseY - image.y;
+          break;
+        }
+      }
+
+      // Check if clicked on a text box
+      for (let i = 0; i < textInputs.length; i++) {
+        const input = textInputs[i];
+        if (
+          mouseX >= input.x &&
+          mouseX <= input.x + input.width &&
+          mouseY >= input.y &&
+          mouseY <= input.y + input.height
+        ) {
+          selectedElement = input;
+          isDragging = true;
+          dragOffsetX = mouseX - input.x;
+          dragOffsetY = mouseY - input.y;
+          break;
+        }
+      }
+
+      drawInfographic(document.getElementById('templateSelect').value);
+    }
+
+    function handleMouseMove(event) {
+      if (isDragging && selectedElement) {
+        const mouseX = event.clientX - canvas.getBoundingClientRect().left;
+        const mouseY = event.clientY - canvas.getBoundingClientRect().top;
+        selectedElement.x = mouseX - dragOffsetX;
+        selectedElement.y = mouseY - dragOffsetY;
+        drawInfographic(document.getElementById('templateSelect').value);
+      }
+    }
+
+    function handleMouseUp(event) {
+      isDragging = false;
+    }
+
+    function handleKeyDown(event) {
+      if (event.keyCode === 8 && selectedElement) { // Handle Backspace key (keyCode 8) for delete
+        deleteSelected();
+      } else if (selectedElement && (event.key === 'r' || event.key === 'R')) { // Rotate image or text box on 'R' key press
+        if (selectedElement.rotationAngle !== undefined) { // Check if selected element supports rotation
+          selectedElement.rotationAngle += 10; // Rotate by 10 degrees
+          drawInfographic(document.getElementById('templateSelect').value);
+        }
+      } else if (selectedElement && event.key === 'w') { // Increase height on 'W' key
+        selectedElement.height += 10;
+        drawInfographic(document.getElementById('templateSelect').value);
+      } else if (selectedElement && event.key === 's') { // Decrease height on 'S' key
+        selectedElement.height -= 10;
+        drawInfographic(document.getElementById('templateSelect').value);
+      } else if (selectedElement && event.key === 'a') { // Decrease width on 'A' key
+        selectedElement.width -= 10;
+        drawInfographic(document.getElementById('templateSelect').value);
+      } else if (selectedElement && event.key === 'd') { // Increase width on 'D' key
+        selectedElement.width += 10;
+        drawInfographic(document.getElementById('templateSelect').value);
+      } else if (event.key === 'z') { // Unselect all elements on 'Z' key
+        selectedElement = null;
+        drawInfographic(document.getElementById('templateSelect').value);
+      }
+    }
+
+    function addTextbox() {
+    const inputText = document.getElementById('textInput').value.trim();
+    const width = parseInt(document.getElementById('textBoxWidth').value) || 200;
+    const height = parseInt(document.getElementById('textBoxHeight').value) || 30;
+
+    if (inputText) {
+        const textMetrics = ctx.measureText(inputText); // Measure the width of the text
+        const textWidth = textMetrics.width; // Get the width of the text
+        const fontSize = 16; // Assuming font size, adjust as needed
+
+        // Calculate the x and y positions to center the text horizontally and vertically
+        const xPosition = 50 + (width - textWidth) / 2;
+        const yPosition = 250 + textInputs.length * 40 + height / 2 + fontSize / 2; // Adjust for font size
+
+        textInputs.push({ text: inputText, x: xPosition, y: yPosition, width, height, rotationAngle: 0 }); // Add rotationAngle property
+        document.getElementById('textInput').value = ''; // Clear the input after adding text box
+        drawInfographic(document.getElementById('templateSelect').value);
+    }
+}
+
+    function deleteSelected() {
+      if (selectedElement) {
+        if (selectedElement.obj) {
+          const index = images.indexOf(selectedElement);
+          if (index > -1) {
+            images.splice(index, 1);
+            selectedElement = null;
+            drawInfographic(document.getElementById('templateSelect').value);
+          }
+        } else {
+          const index = textInputs.indexOf(selectedElement);
+          if (index > -1) {
+            textInputs.splice(index, 1);
+            selectedElement = null;
+            drawInfographic(document.getElementById('templateSelect').value);
+          }
+        }
+      }
+    }
+
+    const borderWidthSlider = document.getElementById('borderWidthSlider');
+    const borderColorPicker = document.getElementById('borderColorPicker');
+    const fontSizeSlider = document.getElementById('fontSizeSlider');
+    const fontColorPicker = document.getElementById('fontColorPicker');
+
+    borderWidthSlider.addEventListener('input', () => {
+      borderWidth = parseInt(borderWidthSlider.value);
+      drawInfographic(document.getElementById('templateSelect').value);
+    });
+
+    borderColorPicker.addEventListener('input', () => {
+      borderColor = borderColorPicker.value;
+      drawInfographic(document.getElementById('templateSelect').value);
+    });
+
+    fontSizeSlider.addEventListener('input', () => {
+      fontSize = parseInt(fontSizeSlider.value);
+      drawInfographic(document.getElementById('templateSelect').value);
+    });
+
+    fontColorPicker.addEventListener('input', () => {
+      fontColor = fontColorPicker.value;
+      drawInfographic(document.getElementById('templateSelect').value);
+    });
+
+    document.getElementById('summaryForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const topic = document.getElementById('topicInput').value;
+            const apiUrl = `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exintro=true&titles=${topic}&origin=*`;
+
+            fetchJsonp(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const pages = data.query.pages;
+                    const pageIds = Object.keys(pages);
+                    const summary = pageIds[0] === "-1" ? "Page not found" : pages[pageIds[0]].extract;
+                    const cleanedSummary = removeHtmlTags(summary);
+                    const coloredSummary = colorizeParagraphs(cleanedSummary);
+                    document.getElementById('summaryContainer').innerHTML = coloredSummary;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+
+        // JSONP fetch function
+        function fetchJsonp(url) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+                window[callbackName] = function(data) {
+                    delete window[callbackName];
+                    document.body.removeChild(script);
+                    resolve({
+                        json: () => Promise.resolve(data)
+                    });
+                };
+
+                const script = document.createElement('script');
+                script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + callbackName;
+                document.body.appendChild(script);
+            });
+        }
+
+        // Function to remove HTML tags
+        function removeHtmlTags(html) {
+            return html.replace(/<[^>]*>/g, '');
+        }
+
+        // Function to colorize paragraphs
+        function colorizeParagraphs(summary) {
+            // Split summary into paragraphs
+            const paragraphs = summary.split('\n').filter(paragraph => paragraph.trim().length > 0); // Exclude empty lines
+
+            // Define array of colors
+            const colors = ['red', 'blue', 'green', 'orange', 'purple', 'brown']; // You can add more colors if needed
+            let coloredSummary = '';
+            // Iterate through paragraphs and apply colors
+            for (let i = 0; i < paragraphs.length; i++) {
+                const color = colors[i % colors.length]; // Use modulo to cycle through colors
+                // Wrap each paragraph in a <span> with a unique class and apply color
+                coloredSummary += `<span class="paragraph" style="color: ${color};">${paragraphs[i]}</span><br>`;
+            }
+            return coloredSummary;
+        }
+
+        function generateInfographic() {
+          // Calculate the number of items (images and text boxes)
+          const totalItems = images.length + textInputs.length;
+
+          if (totalItems === 0) {
+            alert('Please add images or text boxes to generate the infographic.');
+            return;
+          }
+
+          // Calculate the dimensions of each section based on the total canvas space
+          const canvasWidth = canvas.width;
+          const canvasHeight = canvas.height;
+          const sectionWidth = Math.floor(canvasWidth / Math.ceil(Math.sqrt(totalItems)));
+          const sectionHeight = Math.floor((canvasHeight - 200) / Math.ceil(Math.sqrt(totalItems))); // Subtract 200 pixels for the title
+
+          // Calculate the maximum size for images based on the available space
+          const maxImageWidth = sectionWidth - 40; // 40 pixels gap between images
+          const maxImageHeight = sectionHeight - 40; // 40 pixels gap between images
+
+          // Rearrange images and text boxes
+          let currentX = 0;
+          let currentY = 200; // Start below the title
+          for (let i = 0; i < totalItems; i++) {
+            // Calculate the center position of the section
+            const centerX = currentX - sectionWidth / 2;
+            const centerY = currentY - sectionHeight / 2;
+
+            if (i < images.length) {
+              // Arrange images
+              const image = images[i];
+              let newImageWidth = image.width;
+              let newImageHeight = image.height;
+
+              // Adjust image size while maintaining aspect ratio
+              if (newImageWidth > maxImageWidth) {
+                newImageHeight = Math.floor((maxImageWidth / newImageWidth) * newImageHeight);
+                newImageWidth = maxImageWidth;
+              }
+              if (newImageHeight > maxImageHeight) {
+                newImageWidth = Math.floor((maxImageHeight / newImageHeight) * newImageWidth);
+                newImageHeight = maxImageHeight;
+              }
+
+              // Move the image to the center of its section
+              image.x = centerX - newImageWidth / 2;
+              image.y = centerY - newImageHeight / 2;
+              image.width = newImageWidth;
+              image.height = newImageHeight;
+            } else {
+              // Arrange text boxes
+              const textBox = textInputs[i - images.length];
+
+              // Calculate the maximum text width based on the section width minus padding
+              const maxTextWidth = sectionWidth - 40; // 20 pixels gap around text box on each side
+              const fontSize = 16; // Default font size
+              const lineHeight = fontSize * 1.5; // Line height based on font size
+
+              // Calculate the number of lines required to fit the text within the box
+              const lines = Math.ceil(textBox.text.length * fontSize / maxTextWidth);
+
+              // Calculate the adjusted text box height based on the number of lines
+              const textBoxHeight = lines * lineHeight + 40; // 20 pixels padding on top and bottom
+
+              // Move the text box to the center of its section
+              textBox.x = centerX - sectionWidth / 2;
+              textBox.y = centerY - textBoxHeight / 2;
+              textBox.width = sectionWidth;
+              textBox.height = textBoxHeight;
+            }
+
+            currentX += sectionWidth;
+            if (currentX + sectionWidth > canvasWidth) {
+              currentX = 0;
+              currentY += sectionHeight;
+            }
+          }
+
+          // Adjust the positions of text boxes to maintain the 20-pixel gap between them horizontally
+          for (let i = 0; i < textInputs.length; i++) {
+            const textBox = textInputs[i];
+            if (i > 0) {
+              const prevTextBox = textInputs[i - 1];
+              const distanceX = textBox.x - (prevTextBox.x + prevTextBox.width);
+              if (distanceX < 20) {
+                // Move the text box to maintain the 20-pixel gap horizontally
+                textBox.x += 20 - distanceX;
+              }
+            }
+          }
+
+          // Redraw the infographic with rearranged items
+          drawInfographic(document.getElementById('templateSelect').value);
+        }
+        function generateInfo() {
+          const textBoxText = document.getElementById('titleInput').value;
+  const textBoxWidth = 800;
+  const textBoxHeight = 100;
+  const textBoxX = (canvas.width - textBoxWidth) / 2;
+  const textBoxY = 20;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawTextBox(textBoxText, textBoxX, textBoxY, textBoxWidth, textBoxHeight);
+}
+  </script>
+</body>
+</html>
